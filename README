@@ -1,0 +1,21 @@
+Indecent Filter
+------------------------------------
+
+Version: 0.1
+Author: Brendan Abbott (brendan@bloodbone.ws)
+Build Date: 15 February 2010
+Requirements: Symphony 2.0.7
+
+
+[INSTALLATION]
+
+1. Upload the 'indecent' folder in this archive to your Symphony 'extensions' folder.
+
+2. Enable it by selecting the "Filter: Indecent", choose Enable from the with-selected menu, then click Apply.
+
+3. You can now add "Indecent" field to your sections.
+
+[UPDATING]
+
+1. Be sure to visit the Extension page in the Symphony admin and
+   enable "Indecent" so the database is updated accordingly.
