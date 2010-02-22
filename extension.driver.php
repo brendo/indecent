@@ -68,10 +68,10 @@
 			$filter_list = $this->processFilterList();
 
 			if(!empty($filter_list)) foreach($_POST['fields'] as $field => $data) {
-				foreach($filter_list as $word) {
-					if(preg_match('/\b' . $word . '\b/i', $data)) {
+				foreach($filter_list as $term) {
+					if(preg_match('/\b' . preg_quote($term) . '\b/i', $data)) {
 						$valid = false;
-						$response = $word . " was detected in " . $field;
+						$response = $term . " was detected in " . $field;
 						break;
 					}
 				}
