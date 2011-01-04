@@ -17,7 +17,7 @@
 	 		);
 		}
 
-		## Symphony Settings
+		// Symphony Settings
 		public function getSubscribedDelegates() {
 			return array(
 				array(
@@ -48,8 +48,7 @@
 			);
 		}
 
-		## Event Settings
-
+		// Event Settings
 		public function appendFilter($context) {
 			$context['options'][] = array(
 				'indecent',
@@ -69,6 +68,8 @@
 
 			if(!empty($filter_list)) foreach($_POST['fields'] as $field => $data) {
 				foreach($filter_list as $term) {
+					if(empty($term)) continue;
+
 					if(preg_match('/\b' . preg_quote($term) . '\b/i', $data)) {
 						$valid = false;
 						$response = $term . " was detected in " . $field;
@@ -82,8 +83,7 @@
 			);
 		}
 
-		##  Filter List
-
+		//  Filter List
 		public function saveFilterList($data) {
 			return file_put_contents(EXTENSIONS . self::$path, $data);
 		}
@@ -97,19 +97,15 @@
 
 			$filters = explode(PHP_EOL, $file);
 			$filters = array_unique($filters);
-			$filters = array_filter($filters);
 			$filters = array_map('trim', $filters);
+			$filters = array_filter($filters);
 
 			return $filters;
 		}
-		
+
 		public function lastUpdateFilterList() {
 			return DateTimeObj::get('jS F, Y \a\t g:ia', filemtime(EXTENSIONS . self::$path));
 		}
-
-
-
-
 	}
 
 ?>
