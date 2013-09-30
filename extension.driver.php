@@ -1,21 +1,7 @@
 <?php
 
 	class extension_indecent extends Extension {
-		public static $path = "/indecent/lib/indecentfilter.txt";
-
-		public function about() {
-			return array(
-				'name'			=> 'Filter: Indecent',
-				'version'		=> '0.1',
-				'release-date'	=> '2010-02-15',
-				'author'		=> array(
-					'name'			=> 'Brendan Abbott',
-					'website'		=> 'http://bloodbone.ws/',
-					'email'			=> 'brendan@bloodbone.ws'
-				),
-				'description'	=> 'Validates your forms against a blacklist'
-	 		);
-		}
+		public static $file = "/indecent/blacklist.txt";
 
 		// Symphony Settings
 		public function getSubscribedDelegates() {
@@ -48,6 +34,14 @@
 			);
 		}
 
+		public function install() {
+			return General::realiseDirectory(WORKSPACE . '/indecent/');
+		}
+
+		public function uninstall() {
+			return General::deleteDirectory(WORKSPACE . '/indecent/');
+		}
+
 		// Event Settings
 		public function appendFilter($context) {
 			$context['options'][] = array(
@@ -64,7 +58,7 @@
 
 			$valid = true;
 			$response = null;
-			$filter_list = $this->processFilterList();
+			$filter_list = self::processFilterList();
 
 			if(!empty($filter_list)) foreach($_POST['fields'] as $field => $data) {
 				foreach($filter_list as $term) {
@@ -84,28 +78,30 @@
 		}
 
 		//  Filter List
-		public function saveFilterList($data) {
-			return file_put_contents(EXTENSIONS . self::$path, $data);
+		public static function saveFilterList($data) {
+			return General::writeFile(WORKSPACE . self::$file, $data);
 		}
 
-		public function processFilterList($raw = false) {
+		public static function processFilterList($raw = false) {
+			if(!file_exists(WORKSPACE . self::$file)) return '';
 
-			$file = file_get_contents(EXTENSIONS . self::$path);
+			if($raw === true) {
+				$file = file_get_contents(WORKSPACE . self::$file);
+				return $file;
+			}
+			else {
+				$file = file(WORKSPACE . self::$file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+			}
 
-			if(!$file) return false;
-			if($raw) return $file;
-
-			$filters = explode(PHP_EOL, $file);
-			$filters = array_unique($filters);
+			$filters = array_unique($file);
 			$filters = array_map('trim', $filters);
-			$filters = array_filter($filters);
 
 			return $filters;
 		}
 
-		public function lastUpdateFilterList() {
-			return DateTimeObj::get('jS F, Y \a\t g:ia', filemtime(EXTENSIONS . self::$path));
+		public static function lastUpdateFilterList() {
+			if(!file_exists(WORKSPACE . self::$file)) return false;
+
+			return DateTimeObj::get(DateTimeObj::getSetting('datetime_format'), filemtime(WORKSPACE . self::$file));
 		}
 	}
-
-?>
